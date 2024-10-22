@@ -1,8 +1,4 @@
-<p align="center" width="100%">
-<a target="_blank"><img src="figs/VCD_logo_title.png" alt="Visual Contrastive Decoding" style="width: 75%; min-width: 200px; display: block; margin: auto;"></a>
-</p>
-
-# VCD: Mitigating Object Hallucinations in Large Vision-Language Models through Visual Contrastive Decoding
+# IKOD: Mitigating Object Hallucinations in Large Vision-Language Models through Visual Contrastive Decoding
 <!-- **VCD: Mitigating Object Hallucinations in Large Vision-Language Models through Visual Contrastive Decoding** -->
 This is the official repo for Visual Contrastive Decoding, a simple, training-free method for mitigating hallucinations in LVLMs during decoding without utilizing external tools.
 
