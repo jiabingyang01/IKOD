@@ -1,5 +1,8 @@
 # IKOD: Fading Focus: Mitigating Visual Attention Degradation in Large Vision-Language Models
-<!-- **VCD: Mitigating Object Hallucinations in Large Vision-Language Models through Visual Contrastive Decoding** -->
+Chenhang Cui*, Jiabing Yang*, Yiyang Zhou, Peng Xia, Ying Wei, Huaxiu Yao 
+<div align="center">
+*Equal Contribution
+</div>
 This is the official repo for IKOD, a simple, training-free method for mitigating hallucinations in LVLMs during decoding without utilizing external tools.
 
 <div style='display:flex; gap: 0.25rem; '>
@@ -42,32 +45,22 @@ To evaluate model performance on POPE, use eval_pope.py.
 For other datasets, modify the file paths and prompts in corresponding files to generate results and evaluate model performance following the guidance of their original repositories.
 
 ## 🏅 Experiments
-- **VCD significantly mitigates the object hallucination issue across different LVLM families.**
-![exp1](figs/exp1.png)
-*table 1(Part of). Results on POPE. Regular decoding denotes direct sampling, whereas VCD refers to sampling from our proposed contrastive distribution pvcd. The best performances within each setting are bolded.*
+- **IKOD significantly mitigates the hallucination issue across different LVLM families.**
+![exp1](figs/1.png)
 
-- **Beyond mitigating object hallucinations, VCD also excels in general LVLM benchmarks, highlighting its wide-ranging applicability.**
-![exp2](figs/exp2.png)
-*figure 4. MME full set results on LLaVA-1.5. VCD consistently enhances LVLMs’ perception capacities while preserving their recognition competencies.*
-<p align="center" width="80%">
-<a target="_blank"><img src="figs/exp3.png" alt="GPT4V aided evaluation" style="width: 50%; min-width: 200px; display: block; margin: auto;"></a>
-</p>
+- **Beyond mitigating hallucinations, VCD also excels in comprehensive LVLM benchmarks, highlighting its wide-ranging applicability.**
 
-*table 3. Results of GPT-4V-aided evaluation on open-ended generation. Accuracy measures the response’s alignment with the image content, and Detailedness gauges the richness of details in the response. Both metrics are on a scale of 10.*
+![exp1](figs/2.png)
 
-- **Please refer to [our paper](https://arxiv.org/abs/2311.16922) for detailed experimental results.**
+
+- **Please refer to our paper for detailed experimental results.**
 
 
 
 ## 📌 Examples
-![Case1](figs/case.jpg)
-*figure 5. Illustration of hallucination correction by our proposed VCD with two samples from LLaVA-Bench. Hallucinated objects from LVLM's regular decoding are highlighted in red.*
+![Case1](figs/llava_case_study.png)
+*figure 1. Two examples of generated captions by different decoding methods with LLaVA-1.5 backbone.*
 
-![Case2](figs/case_general.jpg)
-*figure 8. More examples from LLaVA-Bench of our proposed VCD for enhanced general perception and recognition capacities.*
-
-![Case3](figs/case_hallu.jpg)
-*figure 7. More examples from LLaVA-Bench of our proposed VCD for hallucination corrections. Hallucinated objects from LVLM's regular decoding are highlighted in red.*
 
 
 ## 📑 Citation
@@ -82,6 +75,7 @@ If you find our project useful, we hope you can star our repo and cite our paper
 }
 ``` -->
 
-## 📝 Related Projects
+<!-- ## 📝 Related Projects
 - [LLaVA 1.5](https://github.com/haotian-liu/LLaVA): Improved Baselines with Visual Instruction Tuning
 - [InstructBLIP](https://github.com/salesforce/LAVIS/tree/main/projects/instructblip): Towards General-purpose Vision-Language Models with Instruction Tuning
+- [AGLA](https://github.com/Lackel/AGLA/): AGLA: Mitigating Object Hallucinations in Large Vision-Language Models with Assembly of Global and Local Attention -->
