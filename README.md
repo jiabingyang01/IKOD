@@ -1,33 +1,30 @@
-# IKOD: Mitigating Object Hallucinations in Large Vision-Language Models through Visual Contrastive Decoding
+# IKOD: Fading Focus: Mitigating Visual Attention Degradation in Large Vision-Language Models
 <!-- **VCD: Mitigating Object Hallucinations in Large Vision-Language Models through Visual Contrastive Decoding** -->
-This is the official repo for Visual Contrastive Decoding, a simple, training-free method for mitigating hallucinations in LVLMs during decoding without utilizing external tools.
+This is the official repo for IKOD, a simple, training-free method for mitigating hallucinations in LVLMs during decoding without utilizing external tools.
 
 <div style='display:flex; gap: 0.25rem; '>
 <a href='LICENCE'><img src='https://img.shields.io/badge/License-Apache 2.0-g.svg'></a>
 <a href='https://arxiv.org/abs/2311.16922'><img src='https://img.shields.io/badge/Paper-PDF-red'></a>
-<a href='https://twitter.com/Leon_L_S_C'><img src='https://img.shields.io/twitter/url/https/twitter.com/cloudposse.svg?style=social&label=Follow%20%40Us'></a>
+<!-- <a href='https://twitter.com/Leon_L_S_C'><img src='https://img.shields.io/twitter/url/https/twitter.com/cloudposse.svg?style=social&label=Follow%20%40Us'></a> -->
 </div>
 
-## 🔥 Update
+<!-- ## 🔥 Update
 * [2024-04-05]: ⭐️⭐️⭐️ VCD is selected as Poster Highlight in CVPR 2024! (Top 11.9% in accepted papers)
 * [2023-11-29]: ⭐️ Paper of VCD online. Check out [this link](https://arxiv.org/abs/2311.16922) for details.
-* [2023-11-28]: 🚀 Codes released.
+* [2023-11-28]: 🚀 Codes released. -->
 
 ## 🎯 Overview
-![VCD](figs/figure1.png)
-- We introduce Visual Contrastive Decoding (VCD), **a simple and training-free** method that contrasts output distributions derived from original and distorted visual inputs.
-- The new **contrastive probability distribution** for decoding is formulated as follows:
-```math
-p_{vcd}(y \mid v, v', x) = softmax[ (1+\alpha)\times logit_\theta (y \mid v, x) - \alpha \times logit_\theta(y \mid v', x)],
-```
-- The proposed VCD effectively reduces the over-reliance on **statistical bias** and **unimodal priors**, two essential causes of object hallucinations.
+![VCD](figs/pipeline.png)
+- We investigate the relationship between Large Vision-Language Models (LVLMs) performance and their visual attention, revealing that as the sequence length increases, the model’s attention to the image diminishes. This diminishing attention leads to performance degradation and errors in the generated responses. 
+- We introduce IKOD, an image attention-guided key-value merging collaborative decoding strategy. This method endows text sequence with high attention on image using key-value merging and integrates the augmented decoding process with the original decoding process to obtain a more accurate output distribution.
+- IKOD does not require additional training or external tools, which is more easily applicable to various models.
 
 
 ## 🕹️ Usage
 ### Environment Setup
 ```bash
-conda create -yn vcd python=3.9
-conda activate vcd
+conda create -n IKOD python=3.9
+conda activate ikod
 cd VCD
 pip install -r requirements.txt
 ```
