@@ -39,7 +39,7 @@ bash cd_scripts/instructblip_pope.bash
 ```
 To evaluate model performance on POPE, use eval_pope.py.
 
-For other datasets, modify the file paths and prompts in run_llava.py and run_instructblip.py to generate results and evaluate model performance following the guidance of their original repositories.
+For other datasets, modify the file paths and prompts in corresponding files to generate results and evaluate model performance following the guidance of their original repositories.
 
 ## 🏅 Experiments
 - **VCD significantly mitigates the object hallucination issue across different LVLM families.**
