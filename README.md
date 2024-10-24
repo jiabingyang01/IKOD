@@ -1,15 +1,17 @@
-# IKOD: Fading Focus: Mitigating Visual Attention Degradation in Large Vision-Language Models
-Chenhang Cui*, Jiabing Yang*, Yiyang Zhou, Peng Xia, Ying Wei, Huaxiu Yao 
-<div align="center">
+# Fading Focus: Mitigating Visual Attention Degradation in Large Vision-Language Models
+Chenhang Cui*, Jiabing Yang*, Yiyang Zhou, Peng Xia, Ying Wei, Huaxiu Yao
+<center>
 *Equal Contribution
-</div>
-This is the official repo for IKOD, a simple, training-free method for mitigating hallucinations in LVLMs during decoding without utilizing external tools.
+</center>
 
-<div style='display:flex; gap: 0.25rem; '>
-<a href='LICENCE'><img src='https://img.shields.io/badge/License-Apache 2.0-g.svg'></a>
-<a href='https://arxiv.org/abs/2311.16922'><img src='https://img.shields.io/badge/Paper-PDF-red'></a>
-<!-- <a href='https://twitter.com/Leon_L_S_C'><img src='https://img.shields.io/twitter/url/https/twitter.com/cloudposse.svg?style=social&label=Follow%20%40Us'></a> -->
+
+<div align="center">
+    <a href="https://arxiv.org/pdf/2402.11411.pdf"><img src="https://img.shields.io/badge/License-Apache 2.0-g.svg" ></a>
+    <a href="https://twitter.com/HuaxiuYaoML/status/1760392292999831887"><img src='https://img.shields.io/badge/Paper-PDF-red'></a>
 </div>
+
+
+This is the official repo for IKOD, a simple, training-free method for mitigating hallucinations in LVLMs during decoding without utilizing external tools.
 
 <!-- ## 🔥 Update
 * [2024-04-05]: ⭐️⭐️⭐️ VCD is selected as Poster Highlight in CVPR 2024! (Top 11.9% in accepted papers)
@@ -26,7 +28,7 @@ This is the official repo for IKOD, a simple, training-free method for mitigatin
 ## 🕹️ Usage
 ### Environment Setup
 ```bash
-conda create -n IKOD python=3.9
+conda create -n IKOD python=3.10
 conda activate IKOD
 cd IKOD
 pip install -r requirements.txt
