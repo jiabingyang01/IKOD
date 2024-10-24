@@ -1,8 +1,9 @@
 # Fading Focus: Mitigating Visual Attention Degradation in Large Vision-Language Models
 Chenhang Cui*, Jiabing Yang*, Yiyang Zhou, Peng Xia, Ying Wei, Huaxiu Yao
-<center>
+
+<div align="center">
 *Equal Contribution
-</center>
+</div>
 
 <div align="center">
     <a href='LICENCE'><img src='https://img.shields.io/badge/License-Apache 2.0-g.svg'></a>
@@ -27,7 +28,7 @@ This is the official repo for IKOD, a simple, training-free method for mitigatin
 ## 🕹️ Usage
 ### Environment Setup
 ```bash
-conda create -n IKOD python=3.9
+conda create -n IKOD python=3.10
 conda activate IKOD
 cd IKOD
 pip install -r requirements.txt
