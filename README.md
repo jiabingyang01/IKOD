@@ -24,44 +24,22 @@ This is the official repo for IKOD, a simple, training-free method for mitigatin
 ### Environment Setup
 ```bash
 conda create -n IKOD python=3.9
-conda activate ikod
-cd VCD
+conda activate IKOD
+cd IKOD
 pip install -r requirements.txt
 ```
 
-### How to Use VCD in LVLMs
+### Running
 
-The two core function of VCD, adding noise to images and generating text based on VCD sampling, are found in the `vcd_utils` folder. Scripts for using VCD sampling in LLaVA, InstructBLIP, and QwenVL are located in `VCD/eval`. We have annotated some key changes with `## cd_comment` for easy location using ctrl+f.
-
-To help you get started quickly, here's an example using LLaVA on how to replace the conventional sampling method with the VCD method during generation:
-1. Add the following at the beginning of the start-up script:
-```python
-from vcd_utils.vcd_sample import evolve_vcd_sampling
-evolve_vcd_sampling()
+To run experiments on POPE with LLaVA 1.5 or InstructBLIP, use the following commands in the eval folder:
 ```
-The `evolve_vcd_sampling` function replaces the sampling function in the transformers library. The modified sampling function includes an option for visual contrastive decoding, while keeping the rest unchanged.
-
-2. Slightly modify `llava_llama.py`:
-
-   a. Add contrastive decoding parameters in the `LlavaLlamaForCausalLM` class's `forward` function to avoid exceptions in `model.generate`.
-   
-   b. Add the `prepare_inputs_for_generation_cd` function.
-
-3. Add noise to the image:
-```python
-from vcd_utils.vcd_add_noise import add_diffusion_noise
-image_tensor_cd = add_diffusion_noise(image_tensor, args.noise_step)
+cd experiments
+bash cd_scripts/llava_pope.bash
+bash cd_scripts/instructblip_pope.bash
 ```
-set the hyperparameter in the `generate` function:
-```python
-output_ids = model.generate(
-    input_ids,
-    images=image_tensor.unsqueeze(0).half().cuda(),
-    images_cd=(image_tensor_cd.unsqueeze(0).half().cuda() if image_tensor_cd is not None else None),
-    cd_alpha = args.cd_alpha,
-    cd_beta = args.cd_beta,
-    do_sample=True)
-```
+To evaluate model performance on POPE, use eval_pope.py.
+
+For other datasets, modify the file paths and prompts in run_llava.py and run_instructblip.py to generate results and evaluate model performance following the guidance of their original repositories.
 
 ## 🏅 Experiments
 - **VCD significantly mitigates the object hallucination issue across different LVLM families.**
@@ -94,7 +72,7 @@ output_ids = model.generate(
 
 ## 📑 Citation
 If you find our project useful, we hope you can star our repo and cite our paper as follows:
-```
+<!-- ```
 @article{damonlpsg2023vcd,
   author = {Sicong Leng, Hang Zhang, Guanzheng Chen, Xin Li, Shijian Lu, Chunyan Miao, Lidong Bing},
   title = {Mitigating Object Hallucinations in Large Vision-Language Models through Visual Contrastive Decoding},
@@ -102,10 +80,8 @@ If you find our project useful, we hope you can star our repo and cite our paper
   journal = {arXiv preprint arXiv:2311.16922},
   url = {https://arxiv.org/abs/2311.16922}
 }
-```
+``` -->
 
 ## 📝 Related Projects
-- [Contrastive Decoding](https://github.com/XiangLi1999/ContrastiveDecoding): Open-ended Text Generation as Optimization
-- [InstructBLIP](https://github.com/salesforce/LAVIS/tree/main/projects/instructblip): Towards General-purpose Vision-Language Models with Instruction Tuning
-- [Qwen-VL](https://github.com/QwenLM/Qwen-VL): A Versatile Vision-Language Model for Understanding, Localization, Text Reading, and Beyond
 - [LLaVA 1.5](https://github.com/haotian-liu/LLaVA): Improved Baselines with Visual Instruction Tuning
+- [InstructBLIP](https://github.com/salesforce/LAVIS/tree/main/projects/instructblip): Towards General-purpose Vision-Language Models with Instruction Tuning
