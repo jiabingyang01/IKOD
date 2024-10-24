@@ -4,10 +4,9 @@ Chenhang Cui*, Jiabing Yang*, Yiyang Zhou, Peng Xia, Ying Wei, Huaxiu Yao
 *Equal Contribution
 </center>
 
-
 <div align="center">
-    <a href="https://arxiv.org/pdf/2402.11411.pdf"><img src="https://img.shields.io/badge/License-Apache 2.0-g.svg" ></a>
-    <a href="https://twitter.com/HuaxiuYaoML/status/1760392292999831887"><img src='https://img.shields.io/badge/Paper-PDF-red'></a>
+    <a href='LICENCE'><img src='https://img.shields.io/badge/License-Apache 2.0-g.svg'></a>
+    <!-- <a href='https://arxiv.org/abs/2311.16922'><img src='https://img.shields.io/badge/Paper-PDF-red'></a> -->
 </div>
 
 
@@ -28,7 +27,7 @@ This is the official repo for IKOD, a simple, training-free method for mitigatin
 ## 🕹️ Usage
 ### Environment Setup
 ```bash
-conda create -n IKOD python=3.10
+conda create -n IKOD python=3.9
 conda activate IKOD
 cd IKOD
 pip install -r requirements.txt
@@ -77,7 +76,10 @@ If you find our project useful, we hope you can star our repo and cite our paper
 }
 ``` -->
 
-<!-- ## 📝 Related Projects
-- [LLaVA 1.5](https://github.com/haotian-liu/LLaVA): Improved Baselines with Visual Instruction Tuning
-- [InstructBLIP](https://github.com/salesforce/LAVIS/tree/main/projects/instructblip): Towards General-purpose Vision-Language Models with Instruction Tuning
-- [AGLA](https://github.com/Lackel/AGLA/): AGLA: Mitigating Object Hallucinations in Large Vision-Language Models with Assembly of Global and Local Attention -->
+## 📝 Related Projects
+- [Improved Baselines with Visual Instruction Tuning](https://github.com/haotian-liu/LLaVA)
+- [Towards General-purpose Vision-Language Models with Instruction Tuning](https://github.com/salesforce/LAVIS/tree/main/projects/instructblip)
+- [OPERA: Alleviating Hallucination in Multi-Modal Large Language Models via Over-Trust Penalty and Retrospection-Allocation](https://github.com/shikiw/OPERA)
+- [Mitigating Object Hallucinations in Large Vision-Language Models through Visual Contrastive Decoding](https://github.com/DAMO-NLP-SG/VCD) 
+- [HALC: Object Hallucination Reduction via Adaptive Focal-Contrast Decoding](https://github.com/BillChan226/HALC)
+- [AGLA: Mitigating Object Hallucinations in Large Vision-Language Models with Assembly of Global and Local Attention](https://github.com/Lackel/AGLA/)
