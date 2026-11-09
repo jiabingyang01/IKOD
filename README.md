@@ -27,9 +27,9 @@ Large vision–language models (LVLMs) frequently hallucinate nonexistent object
 
 To address this root cause directly inside the KV cache without retraining, we propose **IKOD** (**I**mage-Attention-Guided **K**ey–Value Merging against **O**bject Hallucination in **D**ecoding) and its self-adaptive variant **IKOD-A**:
 
-1. **Image-Attention-Guided Post-Visual Anchor Selection**: At each decoding step, IKOD tracks each generated post-visual text token's accumulated image attention share `s_m` across decoder layers, identifies the lowest-visual-attention text positions as anchors (`n_t = ceil(λ · P_t)`), and partitions the post-visual sequence into contiguous local buckets around those anchors.
-2. **Provably Visual-Restoring KV Bucket Merging (Theorem 1)**: IKOD averages the Key–Value states within each post-visual bucket into a single centroid (`D_b → k̃_b, ṽ_b`), forming a compact merged KV cache that **provably increases the total softmax visual attention share (`S'_t > S_t`)** and fuses its logits with the base branch under an adaptive plausibility constraint.
-3. **Tuning-Free Online Decay Gate (`IKOD-A`)**: By monitoring the relative decay `D_t` of visual attention from its initial prefix level against a running median `D̃_t`, **IKOD-A** schedules the collaboration weight `α_t` online in closed form without per-model hyperparameter tuning.
+1. **Image-Attention-Guided Post-Visual Anchor Selection**: At each decoding step, IKOD tracks each generated post-visual text token's accumulated image attention share <i>s<sub>m</sub></i> across decoder layers, identifies the lowest-visual-attention text positions as anchors (<i>n<sub>t</sub></i> = ⌈<i>λ</i> · <i>P<sub>t</sub></i>⌉), and partitions the post-visual sequence into contiguous local buckets around those anchors.
+2. **Provably Visual-Restoring KV Bucket Merging (Theorem 1)**: IKOD averages the Key–Value states within each post-visual bucket into a single centroid (<i>D<sub>b</sub></i> → <i>k̃<sub>b</sub></i>, <i>ṽ<sub>b</sub></i>), forming a compact merged KV cache that **provably increases the total softmax visual attention share (<i>S'<sub>t</sub></i> > <i>S<sub>t</sub></i>)** and fuses its logits with the base branch under an adaptive plausibility constraint.
+3. **Tuning-Free Online Decay Gate (IKOD-A)**: By monitoring the relative decay <i>D<sub>t</sub></i> of visual attention from its initial prefix level against a running median <i>D̃<sub>t</sub></i>, **IKOD-A** schedules the collaboration weight <i>α<sub>t</sub></i> online in closed form without per-model hyperparameter tuning.
 
 <p align="center">
   <img src="figures/assets/ikod_pipeline_v5.png" width="96%" alt="IKOD Architecture and Pipeline"/>
@@ -39,10 +39,10 @@ To address this root cause directly inside the KV cache without retraining, we p
 
 ## ✨ Key Highlights
 
-- **Consistent Hallucination Suppression Across 8 LVLM Families**: Evaluated across **LLaVA-1.5-7B, LLaVA-NeXT-7B, InternVL2-8B, InternVL3-8B, Qwen2-VL-7B, Qwen2.5-VL-7B, Qwen3-VL-8B, and InstructBLIP-7B**, IKOD reduces 8-model mean CHAIR instance hallucination `C_I` from **10.6% → 8.0%** (`-24.5%` relative) and sentence hallucination `C_S` from **38.4% → 31.7%**, while boosting POPE F1 to **87.26%** and CHAIR F1 to **77.9%**.
-- **Zero-Shot Cross-Scale Transfer (`13B`–`32B`)**: Directly transferring the `7B/8B` settings without retuning to **LLaVA-1.5-13B, LLaVA-NeXT-13B, InternVL2.5-26B, and Qwen2.5-VL-32B** consistently outperforms all 7 decoding baselines on both CHAIR and POPE.
-- **No-Regression on General VQA & Multimodal Reasoning**: Preserves or improves performance on **AMBER, MMHal-Bench (GPT-4o judge), LLaVA-Bench-in-the-Wild, MMVet, MMStar, MMBench, and ScienceQA**.
-- **Low Latency Overhead (`1.14×` Greedy vs. `~2.0×` Contrastive / `9.4×` OPERA)**: Via plausibility-singleton short-circuiting (`~38%` of steps skipped losslessly) and persistent visual-prefix buffer reuse, IKOD runs at **27.6 ms/token** (`1.14×` Greedy) compared to `46.8–49.7 ms/token` for two-pass contrastive baselines and `253.6 ms/token` for 5-beam OPERA.
+- **Consistent Hallucination Suppression Across 8 LVLMs**: Evaluated across **LLaVA-1.5-7B, LLaVA-NeXT-7B, LLaVA-OneVision-7B (LLaVA-OV), Qwen2-VL-7B, Qwen2.5-VL-7B, Qwen3-VL-8B, InternVL3-8B, and InstructBLIP-7B**, IKOD reduces 8-model mean CHAIR instance hallucination <i>C<sub>I</sub></i> from **10.1% → 8.0%** and sentence hallucination <i>C<sub>S</sub></i> from **36.9% → 32.4%**, while boosting POPE F1 to **87.97%** and CHAIR F1 to **77.6%**.
+- **Zero-Shot Cross-Scale Transfer (13B–32B)**: Directly transferring the 7B/8B settings without retuning to **LLaVA-1.5-13B, InstructBLIP-13B, InternVL3-14B, and Qwen2.5-VL-32B** consistently outperforms greedy decoding on both CHAIR and POPE.
+- **No-Regression on General VQA & Multimodal Reasoning**: Preserves or improves performance on **AMBER, MME Perception (MME<sup>P</sup>), MMStar (MMS), MMBench-EN (MMB), and ScienceQA-IMG (SQA)**.
+- **Low Latency Overhead (1.14× Greedy vs. ~2.0× Contrastive / 10.67× OPERA)**: Via plausibility-singleton short-circuiting (~38% of steps skipped losslessly) and persistent visual-prefix buffer reuse, IKOD runs at **27.6 ms/token** (1.14× Greedy) compared to 46.8–49.7 ms/token for two-pass contrastive baselines and 253.6 ms/token for 5-beam OPERA.
 
 ---
 
@@ -50,22 +50,22 @@ To address this root cause directly inside the KV cache without retraining, we p
 
 ### 1. 8-Backbone Overall Comparison Summary (Averaged across All 8 LVLMs)
 
-| Method | Venue | Mechanism | Latency (vs. Greedy) | POPE Acc. ↑ | POPE F1 ↑ | CHAIR C<sub>S</sub> ↓ | CHAIR C<sub>I</sub> ↓ | CHAIR F1 ↑ |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| Greedy | — | Standard Autoregressive Decoding | 1.00× | 86.78 | 86.09 | 38.4 | 10.6 | 76.9 |
-| VCD | *CVPR'24* | Distorted-Image Contrastive Logits | 1.93× | 86.38 | 85.94 | 39.6 | 11.1 | 76.4 |
-| M3ID | *CVPR'24* | Imageless Prior Contrastive Logits | 1.95× | 86.17 | 85.79 | 40.3 | 11.3 | 76.1 |
-| OPERA<sup>*</sup> | *CVPR'24* | Over-Trust Penalty + Rollback (5-Beam) | 10.48× | 86.88 | 86.18 | 37.8 | 10.4 | 76.8 |
-| ICD | *ECCV'24* | Instruction-Disturbed Contrastive | 1.94× | 86.45 | 85.85 | 39.2 | 10.9 | 76.5 |
-| SID | *ICLR'25* | Low-Attention Token Pruning Contrastive | 1.99× | 86.64 | 86.05 | 38.5 | 10.7 | 76.7 |
-| AGLA | *ICLR'25* | GradCAM Global-Local Contrastive | 2.05× | 87.02 | 86.39 | 37.4 | 10.2 | 76.8 |
-| ReVisiT | *EMNLP'25* | Visual Layer-Sink Calibration | 1.12× | 86.85 | 86.16 | 38.1 | 10.5 | 76.9 |
-| **IKOD (Ours)** | — | **Image-Attention-Guided KV Bucket Merging** | **1.14×** | **87.64** | **87.26** | **31.7** | **8.0** | <u>77.3</u> |
-| **IKOD-A (Ours)** | — | **Online Visual-Decay-Gated KV Merging** | **1.15×** | <u>87.31</u> | <u>86.81</u> | <u>35.1</u> | <u>9.0</u> | **77.9** |
+| Method | Venue | Mechanism | Latency (vs. Greedy) | POPE F1 ↑ | CHAIR C<sub>S</sub> ↓ | CHAIR C<sub>I</sub> ↓ | CHAIR F1 ↑ | AMBER Attr ↑ | AMBER Hal ↓ |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Greedy | — | Standard Autoregressive Decoding | 1.00× | 86.95 | 36.9 | 10.1 | 77.2 | 83.7 | 47.7 |
+| VCD | *CVPR'24* | Distorted-Image Contrastive Logits | 1.97× | 87.60 | 40.3 | 11.9 | 75.9 | 83.1 | 52.6 |
+| M3ID | *CVPR'24* | Imageless Prior Contrastive Logits | 1.92× | 86.96 | 37.9 | 10.9 | <u>77.5</u> | 83.1 | 48.7 |
+| OPERA<sup>*</sup> | *CVPR'24* | Over-Trust Penalty + Rollback (5-Beam) | 10.67× | 87.14 | 35.6 | 9.6 | 75.3 | <u>84.0</u> | <u>44.1</u> |
+| ICD | *ECCV'24* | Instruction-Disturbed Contrastive | 1.98× | 86.03 | 40.2 | 11.9 | 75.5 | 83.9 | 53.6 |
+| SID | *ICLR'25* | Low-Attention Token Pruning Contrastive | 2.04× | 87.03 | 39.2 | 11.5 | 76.7 | 83.4 | 49.4 |
+| AGLA | *ICLR'25* | GradCAM Global-Local Contrastive | 2.05× | 87.08 | 36.5 | 9.9 | 76.6 | 83.7 | 46.8 |
+| ReVisiT | *EMNLP'25* | Visual Layer-Sink Calibration | 1.05× | 85.48 | 36.8 | 10.2 | 76.9 | 82.8 | 47.8 |
+| **IKOD (Ours)** | — | **Image-Attention-Guided KV Bucket Merging** | **1.14×** | **87.97** | **32.4** | **8.0** | 77.3 | 83.6 | **41.6** |
+| **IKOD-A (Ours)** | — | **Online Visual-Decay-Gated KV Merging** | **1.15×** | <u>87.62</u> | <u>34.2</u> | <u>9.2</u> | **77.6** | **84.1** | 45.4 |
 
 ---
 
-### 2. POPE Benchmark across All 8 LVLMs (Random, Popular, Adversarial & Mean)
+### 2. POPE Benchmark across All 8 LVLMs (Random, Popular, Adversarial & Mean — Table I)
 
 | Model | Split / Metric | Greedy | VCD | M3ID | OPERA<sup>*</sup> | ICD | SID | AGLA | ReVisiT | **IKOD** | **IKOD-A** |
 |:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -104,7 +104,7 @@ To address this root cause directly inside the KV cache without retraining, we p
 
 ---
 
-### 3. CHAIR Open-Ended Captioning Benchmark across All 8 LVLMs
+### 3. CHAIR Open-Ended Captioning Benchmark across All 8 LVLMs (Table II)
 
 | Model | Split / Metric | Greedy | VCD | M3ID | OPERA<sup>*</sup> | ICD | SID | AGLA | ReVisiT | **IKOD** | **IKOD-A** |
 |:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -155,12 +155,11 @@ To address this root cause directly inside the KV cache without retraining, we p
 
 ---
 
-### 4. AMBER Unified Generative & Discriminative Hallucination Benchmark
+### 4. AMBER Unified Generative & Discriminative Hallucination Benchmark (Table III)
 
-| Method | LLaVA-1.5 (Attr/Hal) | (Rel/Cog) | LLaVA-NeXT (Attr/Hal) | (Rel/Cog) | LLaVA-OV (Attr/Hal) | (Rel/Cog) | Qwen2-VL (Attr/Hal) | (Rel/Cog) | Qwen2.5-VL (Attr/Hal) | (Rel/Cog) | Qwen3-VL (Attr/Hal) | (Rel/Cog) | InternVL3 (Attr/Hal) | (Rel/Cog) | InstructBLIP (Attr/Hal) | (Rel/Cog) | **Avg (Attr/Hal)** | **(Rel/Cog)** |
+#### 4.1 (a) Fine-Grained Discriminative Probing: Attribute F1 (Attr ↑) & Relation F1 (Rel ↑)
+| Method | LLaVA-1.5 Attr↑ | LLaVA-1.5 Rel↑ | LLaVA-NeXT Attr↑ | LLaVA-NeXT Rel↑ | LLaVA-OV Attr↑ | LLaVA-OV Rel↑ | Qwen2-VL Attr↑ | Qwen2-VL Rel↑ | Qwen2.5-VL Attr↑ | Qwen2.5-VL Rel↑ | Qwen3-VL Attr↑ | Qwen3-VL Rel↑ | InternVL3 Attr↑ | InternVL3 Rel↑ | InstructBLIP Attr↑ | InstructBLIP Rel↑ | **Average** Attr↑ | **Avg** Rel↑ |
 |:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| ***(a) Fine-Grained Discriminative Probing: Attribute F1 (Attr↑) / Relation F1 (Rel↑)*** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| Method | Attr↑ | Rel↑ | Attr↑ | Rel↑ | Attr↑ | Rel↑ | Attr↑ | Rel↑ | Attr↑ | Rel↑ | Attr↑ | Rel↑ | Attr↑ | Rel↑ | Attr↑ | Rel↑ | Attr↑ | Rel↑ |
 | Greedy | 77.5 | 41.2 | 81.4 | 52.0 | **88.0** | 77.4 | 86.2 | 74.4 | 83.0 | 72.3 | 87.4 | 87.1 | 86.4 | 80.2 | **79.7** | <u>76.6</u> | 83.7 | 70.1 |
 | VCD | 76.7 | 49.7 | 80.3 | 59.6 | 87.6 | 78.1 | 85.1 | 72.3 | 83.1 | 72.0 | 86.8 | 84.9 | 85.8 | 81.6 | <u>79.6</u> | 76.3 | 83.1 | 71.8 |
 | M3ID | 75.8 | 47.3 | 79.8 | 63.7 | <u>87.9</u> | 80.9 | 85.9 | <u>76.5</u> | 83.5 | **79.9** | 87.1 | **90.3** | 86.4 | 82.6 | 78.3 | 59.4 | 83.1 | 72.6 |
@@ -171,7 +170,10 @@ To address this root cause directly inside the KV cache without retraining, we p
 | ReVisiT | 78.0 | 51.2 | 81.5 | 56.6 | 87.5 | 73.7 | 85.7 | 71.3 | 82.5 | 70.3 | 87.3 | 87.2 | 86.4 | 80.4 | 73.5 | 74.7 | 82.8 | 70.7 |
 | **IKOD** | <u>80.4</u> | **71.2** | <u>82.9</u> | **82.9** | 84.2 | **85.8** | 86.0 | 76.1 | 83.6 | 73.5 | 87.1 | 88.3 | **86.9** | 82.1 | 77.9 | **78.3** | 83.6 | **79.8** |
 | **IKOD-A** | **80.5** | 56.0 | **83.2** | <u>72.1</u> | 87.3 | <u>85.0</u> | **86.3** | 75.6 | 83.7 | 73.1 | 87.3 | 88.1 | <u>86.7</u> | **85.9** | 77.9 | **78.3** | **84.1** | <u>76.8</u> |
-| ***(b) Open-Ended Generative Captioning: Hallucinated Response Rate (Hal↓) / Cognitive Bias Rate (Cog↓)*** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+
+#### 4.2 (b) Open-Ended Generative Captioning: Hallucinated Response Rate (Hal ↓) & Cognitive Bias Rate (Cog ↓)
+| Method | LLaVA-1.5 Hal↓ | LLaVA-1.5 Cog↓ | LLaVA-NeXT Hal↓ | LLaVA-NeXT Cog↓ | LLaVA-OV Hal↓ | LLaVA-OV Cog↓ | Qwen2-VL Hal↓ | Qwen2-VL Cog↓ | Qwen2.5-VL Hal↓ | Qwen2.5-VL Cog↓ | Qwen3-VL Hal↓ | Qwen3-VL Cog↓ | InternVL3 Hal↓ | InternVL3 Cog↓ | InstructBLIP Hal↓ | InstructBLIP Cog↓ | **Average** Hal↓ | **Avg** Cog↓ |
+|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | Greedy | 32.4 | 3.7 | 51.7 | 4.6 | 69.1 | 8.0 | 41.0 | 3.8 | 20.5 | 0.9 | <u>60.0</u> | 3.9 | 72.2 | 8.9 | 34.9 | 3.7 | 47.7 | 4.7 |
 | VCD | 38.4 | 4.4 | 61.1 | 5.7 | 69.3 | 6.7 | 45.2 | 3.9 | 24.0 | 1.0 | 65.3 | 4.1 | 77.2 | 10.2 | 40.4 | 3.5 | 52.6 | 4.9 |
 | M3ID | 32.5 | 3.2 | 50.6 | 4.4 | 68.7 | 7.0 | 44.6 | 4.0 | 21.7 | 1.1 | 61.3 | 3.9 | 73.7 | 8.3 | 36.6 | 3.8 | 48.7 | 4.5 |
@@ -185,24 +187,25 @@ To address this root cause directly inside the KV cache without retraining, we p
 
 ---
 
-### 5. General VQA & Multimodal Capabilities (MMHal-Bench, LLaVA-Wild, MMVet, MMStar, MMBench, ScienceQA)
+### 5. General VQA & Multimodal Capabilities (Table IV)
 
-| Method | LLaVA-1.5 (MME/MMB) | (MMS/SQA) | LLaVA-NeXT (MME/MMB) | (MMS/SQA) | LLaVA-OV (MME/MMB) | (MMS/SQA) | Qwen2-VL (MME/MMB) | (MMS/SQA) | Qwen2.5-VL (MME/MMB) | (MMS/SQA) | Qwen3-VL (MME/MMB) | (MMS/SQA) | InternVL3 (MME/MMB) | (MMS/SQA) | InstructBLIP (MME/MMB) | (MMS/SQA) | **Avg (MME/MMB)** | **(MMS/SQA)** |
+#### 5.1 (a) Perception & Vision-Indispensable Reasoning: MME Perception (MME<sup>P</sup> ↑) & MMStar (MMS ↑)
+| Method | LLaVA-1.5 MME<sup>P</sup>↑ | LLaVA-1.5 MMS↑ | LLaVA-NeXT MME<sup>P</sup>↑ | LLaVA-NeXT MMS↑ | LLaVA-OV MME<sup>P</sup>↑ | LLaVA-OV MMS↑ | Qwen2-VL MME<sup>P</sup>↑ | Qwen2-VL MMS↑ | Qwen2.5-VL MME<sup>P</sup>↑ | Qwen2.5-VL MMS↑ | Qwen3-VL MME<sup>P</sup>↑ | Qwen3-VL MMS↑ | InternVL3 MME<sup>P</sup>↑ | InternVL3 MMS↑ | InstructBLIP MME<sup>P</sup>↑ | InstructBLIP MMS↑ | **Average** MME<sup>P</sup>↑ | **Avg** MMS↑ |
 |:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| ***(a) Perception & Vision-Indispensable Reasoning: MME Perception (MME^{P}↑) / MMStar (MMS↑)*** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| Method | MME^{P} | MMS | MME^{P} | MMS | MME^{P} | MMS | MME^{P} | MMS | MME^{P} | MMS | MME^{P} | MMS | MME^{P} | MMS | MME^{P} | MMS | MME^{P} | MMS |
 | Greedy | **1455** | 33.3 | **1525** | **37.5** | **1559** | **58.9** | **1681** | **57.5** | 1639 | <u>58.2</u> | 1712 | **64.2** | **1701** | **66.2** | **1247** | **3.7** | **1565** | **47.4** |
 | **IKOD** | 1364 | **33.8** | 1434 | <u>36.8</u> | 1354 | 54.8 | <u>1678</u> | 51.6 | **1655** | 57.5 | **1727** | 60.2 | <u>1696</u> | <u>65.8</u> | <u>1193</u> | <u>0.4</u> | 1513 | 45.1 |
 | **IKOD-A** | <u>1438</u> | <u>33.6</u> | <u>1486</u> | 36.6 | <u>1506</u> | <u>57.9</u> | 1672 | <u>54.2</u> | **1655** | **58.3** | <u>1722</u> | <u>63.8</u> | 1688 | <u>65.8</u> | <u>1193</u> | <u>0.4</u> | <u>1545</u> | <u>46.3</u> |
-| ***(b) General Multimodal Comprehension & Science Reasoning: MMBench-EN (MMB↑) / ScienceQA-IMG (SQA↑)*** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-|  | MMB | SQA | MMB | SQA | MMB | SQA | MMB | SQA | MMB | SQA | MMB | SQA | MMB | SQA | MMB | SQA | MMB | SQA |
+
+#### 5.2 (b) General Multimodal Comprehension & Science Reasoning: MMBench-EN (MMB ↑) & ScienceQA-IMG (SQA ↑)
+| Method | LLaVA-1.5 MMB↑ | LLaVA-1.5 SQA↑ | LLaVA-NeXT MMB↑ | LLaVA-NeXT SQA↑ | LLaVA-OV MMB↑ | LLaVA-OV SQA↑ | Qwen2-VL MMB↑ | Qwen2-VL SQA↑ | Qwen2.5-VL MMB↑ | Qwen2.5-VL SQA↑ | Qwen3-VL MMB↑ | Qwen3-VL SQA↑ | InternVL3 MMB↑ | InternVL3 SQA↑ | InstructBLIP MMB↑ | InstructBLIP SQA↑ | **Average** MMB↑ | **Avg** SQA↑ |
+|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | Greedy | **61.9** | **68.6** | <u>66.7</u> | **73.3** | **81.1** | **89.6** | **78.7** | **85.3** | **80.8** | **81.0** | **84.6** | **92.9** | **84.3** | **96.4** | **13.4** | **38.6** | **68.9** | **78.2** |
 | **IKOD** | 54.7 | 67.6 | 62.7 | 72.7 | 76.1 | <u>89.5</u> | 73.9 | 83.9 | 77.5 | <u>80.9</u> | 83.2 | **92.9** | <u>84.1</u> | **96.4** | <u>6.2</u> | <u>27.6</u> | 64.8 | 76.4 |
 | **IKOD-A** | <u>60.0</u> | <u>68.4</u> | **66.8** | <u>72.9</u> | <u>80.8</u> | **89.6** | <u>77.3</u> | <u>84.2</u> | <u>79.6</u> | **81.0** | <u>83.8</u> | **92.9** | 82.0 | **96.4** | <u>6.2</u> | <u>27.6</u> | <u>67.1</u> | <u>76.6</u> |
 
 ---
 
-### 6. Zero-Shot Cross-Scale Transfer (`13B`–`32B` Backbones)
+### 6. Zero-Shot Cross-Scale Transfer (13B–32B Backbones)
 
 #### 6.1 CHAIR Cross-Scale Transfer (Table VII)
 | Model | Method | C<sub>S</sub>↓ | C<sub>I</sub>↓ | Recall↑ | F1↑ |
@@ -224,23 +227,23 @@ To address this root cause directly inside the KV cache without retraining, we p
 | **Average** | **IKOD-A** | <u>42.1</u> | <u>10.6</u> | **73.2** | **80.4** |
 
 #### 6.2 POPE Cross-Scale Transfer (Table XIII)
-| Method | LLaVA-1.5-13B Acc↑ | F1↑ | InstructBLIP-13B Acc↑ | F1↑ | InternVL3-14B Acc↑ | F1↑ | Qwen2.5-VL-32B Acc↑ | F1↑ | **Average Acc↑** | **F1↑** |
-|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| LLaVA-1.5-13B | Greedy | 86.28 | 85.58 | 83.97 | 85.28 |  |  |  |  |  |
-| LLaVA-1.5-13B | **IKOD** | **87.85** | **86.68** | **84.87** | **86.47** |  |  |  |  |  |
-| LLaVA-1.5-13B | **IKOD-A** | <u>87.18</u> | <u>86.38</u> | <u>84.63</u> | <u>86.06</u> |  |  |  |  |  |
-| InstructBLIP-13B | Greedy | <u>84.79</u> | <u>82.92</u> | <u>80.89</u> | <u>82.87</u> |  |  |  |  |  |
-| InstructBLIP-13B | **IKOD** | **85.64** | **83.26** | **81.27** | **83.39** |  |  |  |  |  |
-| InstructBLIP-13B | **IKOD-A** | **85.64** | **83.26** | **81.27** | **83.39** |  |  |  |  |  |
-| InternVL3-14B | Greedy | 94.22 | **90.16** | **86.96** | **90.45** |  |  |  |  |  |
-| InternVL3-14B | **IKOD** | <u>94.34</u> | <u>89.85</u> | <u>86.79</u> | <u>90.33</u> |  |  |  |  |  |
-| InternVL3-14B | **IKOD-A** | **94.52** | 89.20 | 86.11 | 89.94 |  |  |  |  |  |
-| Qwen2.5-VL-32B | Greedy | 87.58 | 86.65 | 85.30 | 86.51 |  |  |  |  |  |
-| Qwen2.5-VL-32B | **IKOD** | **89.29** | **87.72** | **86.45** | **87.82** |  |  |  |  |  |
-| Qwen2.5-VL-32B | **IKOD-A** | <u>88.55</u> | <u>87.33</u> | <u>86.08</u> | <u>87.32</u> |  |  |  |  |  |
-| **Average** | Greedy | 88.22 | 86.33 | 84.28 | 86.28 |  |  |  |  |  |
-| **Average** | **IKOD** | **89.28** | **86.88** | **84.85** | **87.00** |  |  |  |  |  |
-| **Average** | **IKOD-A** | <u>88.97</u> | <u>86.54</u> | <u>84.52</u> | <u>86.68</u> |  |  |  |  |  |
+| Model | Method | Random ↑ | Popular ↑ | Adversarial ↑ | Average ↑ |
+|:---|:---|---:|---:|---:|---:|
+| LLaVA-1.5-13B | Greedy | 86.28 | 85.58 | 83.97 | 85.28 |
+| LLaVA-1.5-13B | **IKOD** | **87.85** | **86.68** | **84.87** | **86.47** |
+| LLaVA-1.5-13B | **IKOD-A** | <u>87.18</u> | <u>86.38</u> | <u>84.63</u> | <u>86.06</u> |
+| InstructBLIP-13B | Greedy | <u>84.79</u> | <u>82.92</u> | <u>80.89</u> | <u>82.87</u> |
+| InstructBLIP-13B | **IKOD** | **85.64** | **83.26** | **81.27** | **83.39** |
+| InstructBLIP-13B | **IKOD-A** | **85.64** | **83.26** | **81.27** | **83.39** |
+| InternVL3-14B | Greedy | 94.22 | **90.16** | **86.96** | **90.45** |
+| InternVL3-14B | **IKOD** | <u>94.34</u> | <u>89.85</u> | <u>86.79</u> | <u>90.33</u> |
+| InternVL3-14B | **IKOD-A** | **94.52** | 89.20 | 86.11 | 89.94 |
+| Qwen2.5-VL-32B | Greedy | 87.58 | 86.65 | 85.30 | 86.51 |
+| Qwen2.5-VL-32B | **IKOD** | **89.29** | **87.72** | **86.45** | **87.82** |
+| Qwen2.5-VL-32B | **IKOD-A** | <u>88.55</u> | <u>87.33</u> | <u>86.08</u> | <u>87.32</u> |
+| **Average** | Greedy | 88.22 | 86.33 | 84.28 | 86.28 |
+| **Average** | **IKOD** | **89.28** | **86.88** | **84.85** | **87.00** |
+| **Average** | **IKOD-A** | <u>88.97</u> | <u>86.54</u> | <u>84.52</u> | <u>86.68</u> |
 
 ---
 
@@ -288,23 +291,19 @@ To address this root cause directly inside the KV cache without retraining, we p
 
 ### 8. Component Ablations on KV Merging & Collaborative Decoding
 
-#### 8.1 KV Merging Design Ablations (Anchor Rule, Bucket Reduction, Scope & Prefix Reuse — Table V)
-| Setting | LLaVA-1.5 C<sub>I</sub>↓ | F1↑ | LLaVA-NeXT C<sub>I</sub>↓ | F1↑ | LLaVA-OV C<sub>I</sub>↓ | F1↑ | Qwen2-VL C<sub>I</sub>↓ | F1↑ | Qwen2.5-VL C<sub>I</sub>↓ | F1↑ | Qwen3-VL C<sub>I</sub>↓ | F1↑ | InternVL3 C<sub>I</sub>↓ | F1↑ | InstructBLIP C<sub>I</sub>↓ | F1↑ | **Avg C<sub>I</sub>↓** | **Avg F1↑** |
-|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Setting | C<sub>I</sub>↓ | F1↑ | C<sub>I</sub>↓ | F1↑ | C<sub>I</sub>↓ | F1↑ | C<sub>I</sub>↓ | F1↑ | C<sub>I</sub>↓ | F1↑ | C<sub>I</sub>↓ | F1↑ | C<sub>I</sub>↓ | F1↑ | C<sub>I</sub>↓ | F1↑ | C<sub>I</sub>↓ | F1↑ |
-| Greedy (base) | 15.9 | 80.8 | 9.2 | 73.0 | 8.2 | 76.6 | 7.4 | 77.7 | 6.8 | 71.1 | 10.9 | 81.1 | 9.1 | 79.3 | 13.3 | 78.2 | 10.1 | 77.2 |
-| ***(a) Anchor selection criterion*** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| High-attention | **10.4** | 81.0 | 7.5 | 72.0 | **5.4** | 73.7 | 8.2 | 75.7 | 7.8 | 71.5 | 9.4 | 81.7 | 8.0 | **79.8** | **10.3** | **79.8** | 8.4 | 76.9 |
-| Uniform stride | 12.9 | **81.4** | 6.6 | **74.5** | **5.4** | **75.2** | 5.5 | 77.2 | 7.3 | **72.4** | **9.2** | **82.2** | 8.8 | 79.3 | 11.4 | 79.0 | 8.4 | **77.7** |
-| **Low-attention (IKOD)** | 12.5 | **81.4** | **6.1** | 73.9 | 6.4 | 72.9 | **4.0** | **78.4** | **6.4** | 70.8 | **9.2** | 82.1 | **7.7** | 79.7 | 11.3 | 79.3 | **8.0** | 77.3 |
-| ***(b) Mergeable post-visual text region P<sub>t</sub>*** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| Prompt suffix | 15.1 | 80.7 | 6.6 | **74.3** | 8.2 | **77.6** | 7.4 | **78.5** | 12.4 | **71.2** | 10.3 | 81.4 | 8.7 | 79.6 | 13.4 | 78.1 | 10.3 | **77.7** |
-| Generated history<sup>†</sup> | **11.2** | 80.8 | 6.2 | 73.0 | **6.4** | 74.0 | 5.2 | 78.0 | **6.2** | 70.9 | 9.3 | 81.5 | 8.0 | 79.2 | **10.3** | **79.5** | **7.9** | 77.1 |
-| **All post-visual (IKOD)** | 12.5 | **81.4** | **6.1** | 73.9 | **6.4** | 72.9 | **4.0** | 78.4 | 6.4 | 70.8 | **9.2** | **82.1** | **7.7** | **79.7** | 11.3 | 79.3 | 8.0 | 77.3 |
-| ***(c) Token aggregation operator*** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| Prune (high-attn) | **10.9** | 80.8 | 7.4 | 72.2 | 6.8 | 73.2 | 4.6 | 78.0 | **6.2** | **71.6** | **9.1** | 81.8 | **7.6** | 79.6 | 15.3 | 78.5 | 8.5 | 77.0 |
-| Prune (low-attn) | 15.4 | 80.7 | 7.6 | 72.9 | **5.6** | **75.2** | 7.9 | 77.7 | 8.6 | 70.6 | 9.2 | 81.3 | 7.9 | **79.7** | 11.6 | 78.6 | 9.2 | 77.1 |
-| **Bucket centroid (IKOD)** | 12.5 | **81.4** | **6.1** | **73.9** | 6.4 | 72.9 | **4.0** | **78.4** | 6.4 | 70.8 | 9.2 | **82.1** | 7.7 | **79.7** | **11.3** | **79.3** | **8.0** | **77.3** |
+#### 8.1 KV Merging Design Ablations (Anchor Rule, Region P<sub>t</sub> & Aggregation Operator — Table V)
+| Ablation Factor | Setting | LLaVA-1.5 C<sub>I</sub>↓ | F1↑ | LLaVA-NeXT C<sub>I</sub>↓ | F1↑ | LLaVA-OV C<sub>I</sub>↓ | F1↑ | Qwen2-VL C<sub>I</sub>↓ | F1↑ | Qwen2.5-VL C<sub>I</sub>↓ | F1↑ | Qwen3-VL C<sub>I</sub>↓ | F1↑ | InternVL3 C<sub>I</sub>↓ | F1↑ | InstructBLIP C<sub>I</sub>↓ | F1↑ | **Average** C<sub>I</sub>↓ | F1↑ |
+|:---|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Baseline | Greedy (base) | 15.9 | 80.8 | 9.2 | 73.0 | 8.2 | 76.6 | 7.4 | 77.7 | 6.8 | 71.1 | 10.9 | 81.1 | 9.1 | 79.3 | 13.3 | 78.2 | 10.1 | 77.2 |
+| *(a) Anchor Selection* | High-attention | **10.4** | 81.0 | 7.5 | 72.0 | **5.4** | 73.7 | 8.2 | 75.7 | 7.8 | 71.5 | 9.4 | 81.7 | 8.0 | **79.8** | **10.3** | **79.8** | 8.4 | 76.9 |
+| *(a) Anchor Selection* | Uniform stride | 12.9 | **81.4** | 6.6 | **74.5** | **5.4** | **75.2** | 5.5 | 77.2 | 7.3 | **72.4** | **9.2** | **82.2** | 8.8 | 79.3 | 11.4 | 79.0 | 8.4 | **77.7** |
+| *(a) Anchor Selection* | **Low-attention (IKOD)** | 12.5 | **81.4** | **6.1** | 73.9 | 6.4 | 72.9 | **4.0** | **78.4** | **6.4** | 70.8 | **9.2** | 82.1 | **7.7** | 79.7 | 11.3 | 79.3 | **8.0** | 77.3 |
+| *(b) Region P<sub>t</sub>* | Prompt suffix | 15.1 | 80.7 | 6.6 | **74.3** | 8.2 | **77.6** | 7.4 | **78.5** | 12.4 | **71.2** | 10.3 | 81.4 | 8.7 | 79.6 | 13.4 | 78.1 | 10.3 | **77.7** |
+| *(b) Region P<sub>t</sub>* | Generated history<sup>†</sup> | **11.2** | 80.8 | 6.2 | 73.0 | **6.4** | 74.0 | 5.2 | 78.0 | **6.2** | 70.9 | 9.3 | 81.5 | 8.0 | 79.2 | **10.3** | **79.5** | **7.9** | 77.1 |
+| *(b) Region P<sub>t</sub>* | **All post-visual (IKOD)** | 12.5 | **81.4** | **6.1** | 73.9 | **6.4** | 72.9 | **4.0** | 78.4 | 6.4 | 70.8 | **9.2** | **82.1** | **7.7** | **79.7** | 11.3 | 79.3 | 8.0 | 77.3 |
+| *(c) Aggregation Rule* | Prune (high-attn) | **10.9** | 80.8 | 7.4 | 72.2 | 6.8 | 73.2 | 4.6 | 78.0 | **6.2** | **71.6** | **9.1** | 81.8 | **7.6** | 79.6 | 15.3 | 78.5 | 8.5 | 77.0 |
+| *(c) Aggregation Rule* | Prune (low-attn) | 15.4 | 80.7 | 7.6 | 72.9 | **5.6** | **75.2** | 7.9 | 77.7 | 8.6 | 70.6 | 9.2 | 81.3 | 7.9 | **79.7** | 11.6 | 78.6 | 9.2 | 77.1 |
+| *(c) Aggregation Rule* | **Bucket centroid (IKOD)** | 12.5 | **81.4** | **6.1** | **73.9** | 6.4 | 72.9 | **4.0** | **78.4** | 6.4 | 70.8 | 9.2 | **82.1** | 7.7 | **79.7** | **11.3** | **79.3** | **8.0** | **77.3** |
 
 #### 8.2 Dual-Branch Collaborative Decoding & Fusion Sign Ablation (Table VI)
 | ℓ<sub>base</sub> | ℓ<sub>merged</sub> | Sign | POPE↑ | C<sub>S</sub>↓ | C<sub>I</sub>↓ | Recall↑ | F1↑ |
@@ -355,7 +354,7 @@ To address this root cause directly inside the KV cache without retraining, we p
 
 ### 10. Mechanistic Verification, Hyperparameter Landscapes & Qualitative Case Studies
 
-#### 10.1 Layer–Head Visual Attention Decay & 3D Hyperparameter Surfaces (`λ` × `α`)
+#### 10.1 Layer–Head Visual Attention Decay & 3D Hyperparameter Surfaces (λ × α)
 <p align="center">
   <img src="figures/assets/layerhead_main.png" width="48%" alt="Layer-Head Attention Decay Heatmap"/>
   <img src="figures/assets/fig_joint_3d_8models_pope.png" width="48%" alt="3D Hyperparameter Sensitivity across 8 Models"/>
@@ -396,7 +395,7 @@ with IKODHookManager(model, config=config, img_start_idx=35, img_end_idx=611):
     output_ids = model.generate(input_ids, images=image_tensor, max_new_tokens=512, do_sample=False)
 ```
 
-For full multi-backbone adapters (`LLaVA-1.5`, `LLaVA-NeXT`, `InternVL2/3`, `Qwen2/2.5/3-VL`, `InstructBLIP`) and evaluation scripts (`POPE`, `CHAIR`, `AMBER`, `MMHal-Bench`), see [`integrations/README.md`](integrations/README.md).
+For full multi-backbone adapters (`LLaVA-1.5`, `LLaVA-NeXT`, `LLaVA-OV`, `Qwen2/2.5/3-VL`, `InternVL3`, `InstructBLIP`) and evaluation scripts (`POPE`, `CHAIR`, `AMBER`, `MME`), see [`integrations/README.md`](integrations/README.md).
 
 ---
 
