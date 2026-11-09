@@ -41,7 +41,7 @@ output_ids = ikod_generate(
 
 Across all benchmarks and all 12 backbones (8 primary 7B/8B models + 4 scaled 13B–32B models), plausibility threshold is fixed at $\beta = 0.1$, and **IKOD-A** uses a single universal schedule ($\alpha_{\min} = 0, \alpha_{\max} = 1, \kappa = 10, w = 3$) with zero per-backbone alpha tuning:
 
-| Backbone Family | Models Covered | Retained Ratio $\lambda$ | IKOD Fixed $\alpha$ (Captioning / Probing) | IKOD-A Schedule |
+| Backbone Family | Models Covered | Retained Ratio λ | IKOD Fixed α (Captioning / Probing) | IKOD-A Schedule |
 |---|---|:---:|:---:|:---:|
 | **LLaVA Family** | LLaVA-1.5-7B/13B, LLaVA-NeXT-7B, LLaVA-OneVision-7B | `0.4` | `4.0` / `1.0` | Universal ($\alpha_{\min}{=}0, \alpha_{\max}{=}1, \kappa{=}10$) |
 | **Qwen-VL Family** | Qwen2-VL-7B, Qwen2.5-VL-7B/32B, Qwen3-VL-8B | `0.6` | `4.0` / `0.5` | Universal ($\alpha_{\min}{=}0, \alpha_{\max}{=}1, \kappa{=}10$) |
