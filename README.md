@@ -1,6 +1,6 @@
 <div align="center">
 
-# IKOD: Image-Attention-Guided Key–Value Merging against Object Hallucination in the Decoding of Large Vision–Language Models
+# IKOD: Image-Attention-Guided Key-Value Merging against Object Hallucination in the Decoding of Large Vision-Language Models
 
 <p align="center">
   <a href="https://arxiv.org/abs/2508.03469"><img src="https://img.shields.io/badge/arXiv-2508.03469-b31b1b.svg" alt="arXiv"></a>
@@ -405,9 +405,10 @@ If you find **IKOD** useful in your research, please cite our paper:
 
 ```bibtex
 @article{yang2026ikod,
-  title={IKOD: Image-Attention-Guided Key-Value Merging against Object Hallucination in the Decoding of Large Vision-Language Models},
-  author={Yang, Jiabing and Cui, Chenhang and Chen, Yixiang and Yu, Tao and Huang, Yan and Wang, Liang},
-  journal={arXiv preprint arXiv:2508.03469},
-  year={2026}
+  title   = {IKOD: Image-Attention-Guided Key-Value Merging against Object Hallucination in the Decoding of Large Vision-Language Models},
+  author  = {Yang, Jiabing and Cui, Chenhang and Chen, Yixiang and Yu, Tao and Huang, Yan and Wang, Liang},
+  journal = {arXiv preprint arXiv:2508.03469},
+  year    = {2026},
+  url     = {https://arxiv.org/abs/2508.03469}
 }
 ```

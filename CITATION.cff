@@ -1,0 +1,37 @@
+cff-version: 1.2.0
+message: "If you find IKOD useful in your research, please cite our paper:"
+title: "IKOD: Image-Attention-Guided Key-Value Merging against Object Hallucination in the Decoding of Large Vision-Language Models"
+authors:
+  - family-names: "Yang"
+    given-names: "Jiabing"
+  - family-names: "Cui"
+    given-names: "Chenhang"
+  - family-names: "Chen"
+    given-names: "Yixiang"
+  - family-names: "Yu"
+    given-names: "Tao"
+  - family-names: "Huang"
+    given-names: "Yan"
+  - family-names: "Wang"
+    given-names: "Liang"
+year: 2026
+url: "https://github.com/jiabingyang01/IKOD"
+preferred-citation:
+  type: article
+  title: "IKOD: Image-Attention-Guided Key-Value Merging against Object Hallucination in the Decoding of Large Vision-Language Models"
+  authors:
+    - family-names: "Yang"
+      given-names: "Jiabing"
+    - family-names: "Cui"
+      given-names: "Chenhang"
+    - family-names: "Chen"
+      given-names: "Yixiang"
+    - family-names: "Yu"
+      given-names: "Tao"
+    - family-names: "Huang"
+      given-names: "Yan"
+    - family-names: "Wang"
+      given-names: "Liang"
+  journal: "arXiv preprint arXiv:2508.03469"
+  year: 2026
+  url: "https://arxiv.org/abs/2508.03469"

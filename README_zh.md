@@ -405,9 +405,10 @@ with IKODHookManager(model, config=config, img_start_idx=35, img_end_idx=611):
 
 ```bibtex
 @article{yang2026ikod,
-  title={IKOD: Image-Attention-Guided Key-Value Merging against Object Hallucination in the Decoding of Large Vision-Language Models},
-  author={Yang, Jiabing and Cui, Chenhang and Chen, Yixiang and Yu, Tao and Huang, Yan and Wang, Liang},
-  journal={arXiv preprint arXiv:2508.03469},
-  year={2026}
+  title   = {IKOD: Image-Attention-Guided Key-Value Merging against Object Hallucination in the Decoding of Large Vision-Language Models},
+  author  = {Yang, Jiabing and Cui, Chenhang and Chen, Yixiang and Yu, Tao and Huang, Yan and Wang, Liang},
+  journal = {arXiv preprint arXiv:2508.03469},
+  year    = {2026},
+  url     = {https://arxiv.org/abs/2508.03469}
 }
 ```
